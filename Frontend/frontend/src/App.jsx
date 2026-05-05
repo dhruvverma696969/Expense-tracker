@@ -12,14 +12,14 @@ function App() {
 
 
   useEffect(() => {
-    fetch("http://localhost:5000/expenses")
+    fetch("https://expense-backend-pbkn.onrender.com/expenses")
       .then(res => res.json())
       .then(data => setExpenses(data));
   }, []);
 
 
   function addExpense(expense) {
-    fetch("http://localhost:5000/expenses", {
+    fetch("https://expense-backend-pbkn.onrender.com/expenses", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -27,7 +27,7 @@ function App() {
       body: JSON.stringify(expense)
     })
       .then(() => {
-        return fetch("http://localhost:5000/expenses");
+        return fetch("https://expense-backend-pbkn.onrender.com/expenses");
       })
       .then(res => res.json())
       .then(data => setExpenses(data));
@@ -35,7 +35,7 @@ function App() {
 
   //--DELETE---
   function handleDelete(id) {
-    fetch(`http://localhost:5000/expenses/${id}`, {
+    fetch(`https://expense-backend-pbkn.onrender.com/expenses/${id}`, {
       method: "DELETE"
     }).then(() => {
       setExpenses(prev => prev.filter(exp => exp.id !== id));
@@ -50,14 +50,14 @@ function App() {
   }
 
   function handleUpdate(updatedExpense) {
-    fetch(`http://localhost:5000/expenses/${updatedExpense.id}`, {
+    fetch(`https://expense-backend-pbkn.onrender.com/expenses/${updatedExpense.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(updatedExpense)
     })
-      .then(() => fetch("http://localhost:5000/expenses"))
+      .then(() => fetch("https://expense-backend-pbkn.onrender.com/expenses"))
       .then(res => res.json())
       .then(data => {
         setExpenses(data);
