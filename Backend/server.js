@@ -1,16 +1,25 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
 
 require("dotenv").config();
 
 const db = require("./config/db");
 
 const expenseRoutes = require("./routes/expenseRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://expense-tracker-zeta-jet-40.vercel.app",
+    credentials: true,
+  })
+);
 app.use(express.json());
+app.use(cookieParser());
 
 
 
@@ -34,6 +43,8 @@ app.get("/test-db", (req, res) => {
 
 
 app.use("/expenses", expenseRoutes);
+
+app.use("/api/auth", authRoutes);
 
 
 
