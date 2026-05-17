@@ -17,11 +17,13 @@ const getExpenses = (req, res) => {
 
 const addExpense = (req, res) => {
   const { amount, category, date } = req.body;
+  const userId = req.user;
+  console.log(userId);
 
   const sql =
-    "INSERT INTO expenses (amount, category, date) VALUES (?, ?, ?)";
+    "INSERT INTO expenses (amount, category, date,UserId) VALUES (?, ?, ?, ?)";
 
-  db.query(sql, [amount, category, date], (err, result) => {
+  db.query(sql, [amount, category, date,userId], (err, result) => {
     if (err) {
       console.log(err);
       return res.send("Error adding expense ❌");
