@@ -3,31 +3,69 @@ import AddExpense from "./Components/AddExpense";
 import ExpenseList from "./Components/ExpenseList.jsx";
 import EditExpense from "./Components/EditExpense.jsx";
 
+import AuthPage from "./Components/AuthPage";
+
 function App() {
   const [expenses, setExpenses] = useState([]);
   const [editingExpense, setEditingExpense] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
 
 
   useEffect(() => {
-    fetch("https://expense-backend-pbkn.onrender.com/expenses")
+
+    fetch("https://expense-backend-pbkn.onrender.com/api/auth/me", {
+      credentials: "include"
+    })
+      .then(res => {
+
+        if (!res.ok) {
+          throw new Error("Not authenticated");
+        }
+        return res.json();
+      })
+
+      .then(data => {
+        setIsAuthenticated(true);
+
+        return fetch(
+          "https://expense-backend-pbkn.onrender.com/expenses",
+          {
+            credentials: "include"
+          }
+        );
+      })
+
       .then(res => res.json())
-      .then(data => setExpenses(data));
+
+      .then(data => {
+        setExpenses(data);
+      })
+
+      .catch(err => {
+        console.log(err);
+        setIsAuthenticated(false);
+      });
+
   }, []);
 
 
   function addExpense(expense) {
     fetch("https://expense-backend-pbkn.onrender.com/expenses", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(expense)
     })
       .then(() => {
-        return fetch("https://expense-backend-pbkn.onrender.com/expenses");
+        return fetch("https://expense-backend-pbkn.onrender.com/expenses",
+          {
+            credentials: "include"
+          });
       })
       .then(res => res.json())
       .then(data => setExpenses(data));
@@ -36,7 +74,8 @@ function App() {
   //--DELETE---
   function handleDelete(id) {
     fetch(`https://expense-backend-pbkn.onrender.com/expenses/${id}`, {
-      method: "DELETE"
+      method: "DELETE",
+      credentials: "include"
     }).then(() => {
       setExpenses(prev => prev.filter(exp => exp.id !== id));
     });
@@ -52,12 +91,17 @@ function App() {
   function handleUpdate(updatedExpense) {
     fetch(`https://expense-backend-pbkn.onrender.com/expenses/${updatedExpense.id}`, {
       method: "PUT",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(updatedExpense)
     })
-      .then(() => fetch("https://expense-backend-pbkn.onrender.com/expenses"))
+      .then(() => fetch("https://expense-backend-pbkn.onrender.com/expenses",
+        {
+            credentials: "include"
+          }
+      ))
       .then(res => res.json())
       .then(data => {
         setExpenses(data);
@@ -85,8 +129,76 @@ function App() {
 
 
 
+/////----AUTH HANDELING------/////--------------------------------------------------
 
-  return (
+  function handleAuth(mode, data) {
+
+  const endpoint =
+    mode === "login"
+      ? "login"
+      : "signup";
+
+  fetch(`https://expense-backend-pbkn.onrender.com/api/auth/${endpoint}`, {
+
+    method: "POST",
+
+    credentials: "include",
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify(data),
+  })
+
+    .then((res) => {
+
+      if (!res.ok) {
+        throw new Error("Authentication failed");
+      }
+
+      return res.json();
+    })
+
+    .then(() => {
+
+      setIsAuthenticated(true);
+
+      return fetch(
+        "https://expense-backend-pbkn.onrender.com/expenses",
+        {
+          credentials: "include",
+        }
+      );
+    })
+
+    .then((res) => res.json())
+
+    .then((data) => {
+      setExpenses(data);
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+/////----AUTH HANDELING FINISHED------/////---------------------------------------------------------
+
+
+
+//////-----CONDITIONAL RENDER OF AUTH PAGE-----//////-------------------------------------
+
+
+if (!isAuthenticated) {
+  return <AuthPage onAuth={handleAuth} />;
+}
+
+
+//////------CONDITIONAL RENDER OF EXPENSES PAGE------///////---------------------------------
+  
+
+return (
     <div>
       <h1>Expense Tracker</h1>
 
