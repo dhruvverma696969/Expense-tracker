@@ -1,9 +1,10 @@
 const db = require("../config/db");
 
 
+const userId = req.user;
 
 const getExpenses = (req, res) => {
-  db.query("SELECT * FROM expenses", (err, result) => {
+  db.query("SELECT * FROM expenses WHERE UserId=?",[userId],(err, result) => {
     if (err) {
       console.log(err);
       return res.send("Error fetching ❌");
@@ -17,8 +18,6 @@ const getExpenses = (req, res) => {
 
 const addExpense = (req, res) => {
   const { amount, category, date } = req.body;
-  const userId = req.user;
-  console.log(userId);
 
   const sql =
     "INSERT INTO expenses (amount, category, date,UserId) VALUES (?, ?, ?, ?)";
