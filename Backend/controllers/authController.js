@@ -156,9 +156,20 @@ const logoutUser = (req, res) => {
 
 
 
+const getMe = (req, res) => {
+
+    res.status(200).json({
+        userId: req.user,
+    });
+};
+
+
+
+
 
 module.exports = {
     signupUser,
     loginUser,
     logoutUser,
+    getMe,
 };
