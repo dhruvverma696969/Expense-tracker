@@ -40,10 +40,11 @@ const addExpense = (req, res) => {
 
 const deleteExpense = (req, res) => {
   const id = Number(req.params.id);
+  const userId = req.user;
 
   db.query(
-    "DELETE FROM expenses WHERE id = ?",
-    [id],
+    "DELETE FROM expenses WHERE id = ? AND  UserId = ?",
+    [id,userId],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -64,15 +65,16 @@ const deleteExpense = (req, res) => {
 
 const updateExpense = (req, res) => {
   const id = req.params.id;
+  const userId = req.user;
 
   const { amount, category, date } = req.body;
 
   const sql =
-    "UPDATE expenses SET amount = ?, category = ?, date = ? WHERE id = ?";
+    "UPDATE expenses SET amount = ?, category = ?, date = ? WHERE id = ? AND UserId = ? ";
 
   db.query(
     sql,
-    [amount, category, date, id],
+    [amount, category, date, id,userId],
     (err, result) => {
       if (err) {
         console.log(err);
