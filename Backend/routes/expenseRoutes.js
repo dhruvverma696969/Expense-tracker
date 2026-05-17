@@ -2,6 +2,11 @@ const express = require("express");
 
 const router = express.Router();
 
+const authMiddleware = require("../middleware/authMiddleware");
+
+
+
+
 const {
   getExpenses,
   addExpense,
@@ -11,13 +16,13 @@ const {
 
 
 
-router.get("/", getExpenses);
+router.get("/",authMiddleware, getExpenses);
 
-router.post("/", addExpense);
+router.post("/",authMiddleware,addExpense);
 
-router.delete("/:id", deleteExpense);
+router.delete("/:id",authMiddleware,deleteExpense);
 
-router.put("/:id", updateExpense);
+router.put("/:id",authMiddleware,updateExpense);
 
 
 
