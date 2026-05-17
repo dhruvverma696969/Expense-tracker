@@ -139,8 +139,26 @@ const loginUser = (req, res) => {
 
 
 
+const logoutUser = (req, res) => {
+
+    res
+        .clearCookie("token", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+        })
+        .status(200)
+        .json({
+            message: "Logged out successfully",
+        });
+};
+
+
+
+
 
 module.exports = {
     signupUser,
     loginUser,
+    logoutUser,
 };
